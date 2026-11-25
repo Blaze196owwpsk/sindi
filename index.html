@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sindí – Brownout Power Planner</title>
+<meta name="description" content="Plan your batteries for scheduled brownouts. See what to charge, when to start, and whether your phone, laptop and Wi-Fi will last.">
+<meta name="theme-color" content="#1f2347">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231f2347'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23f5b301'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="#plan" aria-label="Sindí home">
+      <span class="bulb" aria-hidden="true"></span>
+      <span class="brand-word">Sindí</span>
+      <span class="brand-sub">Brownout power planner</span>
+    </a>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#plan" data-view="plan">Plan</a>
+      <a href="#brownouts" data-view="brownouts">Brownouts</a>
+      <a href="#devices" data-view="devices">Devices</a>
+      <a href="#backup" data-view="backup">Backup</a>
+    </nav>
+  </div>
+</header>
+
+<div id="hero"></div>
+
+<main>
+  <section id="view-plan" class="view" aria-label="Plan"></section>
+  <section id="view-brownouts" class="view" aria-label="Brownouts" hidden></section>
+  <section id="view-devices" class="view" aria-label="Devices" hidden></section>
+  <section id="view-backup" class="view" aria-label="Settings and backup" hidden></section>
+</main>
+
+<footer class="foot">
+  <p>Sindí keeps everything in this browser. Nothing is sent to a server.</p>
+  <p>Made by John Ivan Sydrie Elgario</p>
+</footer>
+
+<dialog id="device-dialog" aria-labelledby="device-title">
+  <form id="device-form" novalidate>
+    <h2 id="device-title">Add device</h2>
+    <label class="field"><span>Name</span><input name="name" maxlength="40" autocomplete="off"></label>
+    <label class="field"><span>Type</span><select name="type"></select></label>
+    <div class="row2" data-show="battery">
+      <label class="field"><span>Battery size</span><input name="capacity" type="number" min="0" step="any" inputmode="decimal"></label>
+      <label class="field"><span>Unit</span><select name="unit"><option value="mAh">mAh</option><option value="Wh">Wh</option></select></label>
+    </div>
+    <label class="field" data-show="volt"><span>Battery voltage (V)</span><input name="volt" type="number" min="1" step="0.01" inputmode="decimal"><small>3.85 for most phones and tablets, 3.7 for power banks and fans. It's printed on the battery or the box.</small></label>
+    <label class="field" data-show="battery"><span>Charge right now: <output name="chargeOut">50</output>%</span><input name="charge" type="range" min="0" max="100" step="1"></label>
+    <label class="field" data-show="use"><span>Power it uses while on (W)</span><input name="useW" type="number" min="0" step="any" inputmode="decimal"><small>Rough guide: phone 2–3 W, laptop 10–20 W, Wi-Fi router 6–12 W, fan 4–6 W.</small></label>
+    <label class="field" data-show="eff"><span>Usable energy (%)</span><input name="eff" type="number" min="10" max="100" step="1" inputmode="numeric"><small>Some energy is lost when a power bank charges another device. 65% is typical, about 80% for a mini UPS.</small></label>
+    <label class="field" data-show="charger"><span>Charger power (W)</span><input name="chargerW" type="number" min="0" step="any" inputmode="decimal"><small>Printed on the charger. Used to estimate how long charging takes.</small></label>
+    <p class="form-note" data-device-note></p>
+    <div class="actions">
+      <button type="button" class="btn ghost" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save device</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="outage-dialog" aria-labelledby="outage-title">
+  <form id="outage-form" novalidate>
+    <h2 id="outage-title">Add brownout</h2>
+    <p class="lede">Copy the date and times from your power utility's advisory.</p>
+    <div class="row3">
+      <label class="field"><span>Date</span><input name="date" type="date" required></label>
+      <label class="field"><span>Starts</span><input name="startTime" type="time" required></label>
+      <label class="field"><span>Ends</span><input name="endTime" type="time" required></label>
+    </div>
+    <p class="form-note" data-span></p>
+    <div class="row2">
+      <label class="field"><span>Area or feeder</span><input name="area" maxlength="60" placeholder="Jaro, Feeder 6" autocomplete="off"></label>
+      <label class="field"><span>Cause</span><select name="cause"></select></label>
+    </div>
+    <fieldset class="needs">
+      <legend>What you need power for</legend>
+      <div data-needs></div>
+      <button type="button" class="btn ghost small" data-add-need>Add a need</button>
+    </fieldset>
+    <label class="field"><span>Notes</span><textarea name="notes" rows="2" maxlength="300"></textarea></label>
+    <div class="actions">
+      <button type="button" class="btn ghost" data-close>Cancel</button>
+      <button type="submit" class="btn primary">Save brownout</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
